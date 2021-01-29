@@ -1,0 +1,25 @@
+---
+version: "2"
+services:
+  bazarr:
+    image: linuxserver/bazarr:latest@sha256:3d37a9b86432f1821cf72b56e36ecf44f7610a0122ba303f0f990b1422b213a6
+    container_name: bazarr
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Prague"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.bazarr.rule: "Host(`bazarr.lukasmrtvy.cz`)"
+      traefik.http.services.bazarr.loadbalancer.server.port: 6767
+      traefik.http.routers.bazarr.middlewares: "pomerium-auth@docker"
+    volumes:
+      - /docker/docker-data/bazarr/config:/config
+    networks:
+      - production-network
+    restart: unless-stopped
+
+networks:
+  production-network:
+    external:
+      name: production-network
